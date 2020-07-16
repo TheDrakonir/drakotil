@@ -15,7 +15,7 @@ repositories {
   maven { url 'https://jitpack.io' }
 }
 ```
-2. Add this project to your dependencies
+2. Add this project to your dependencies (use `master-SNAPSHOT` for the latest build or any specific version like `v1.0.0` for a specific version)
 ```gradle
 dependencies {
   implementation 'com.github.TheDrakonir:drakotil:master-SNAPSHOT'
@@ -33,7 +33,7 @@ dependencies {
   </repository>
 </repositories>
 ```
-2. Add this project to your dependencies
+2. Add this project to your dependencies (use `master-SNAPSHOT` for the latest build or any specific version like `v1.0.0` for a specific version)
 ```xml
 <dependency>
   <groupId>com.github.TheDrakonir</groupId>
