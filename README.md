@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/TheDrakonir/drakotil.svg)](https://jitpack.io/#TheDrakonir/drakotil)
+
 # drakotil
 Drakotil is a java library containing many utility functions and classes to make development easier and faster.
 
