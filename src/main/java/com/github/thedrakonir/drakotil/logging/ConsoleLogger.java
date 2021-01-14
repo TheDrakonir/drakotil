@@ -11,7 +11,7 @@ import com.github.thedrakonir.drakotil.serialization.Stringifier;
 
 public class ConsoleLogger implements Logger {
 
-    private final static String LOG_FORMAT = "[%1$tF %1$tT][%2$s]: %3$s";
+    private static final String LOG_FORMAT = "[%1$tF %1$tT][%2$s][%3$s]: %4$s";
 
     private final PrintStream outPrintStream;
 
@@ -26,7 +26,8 @@ public class ConsoleLogger implements Logger {
     private void printLog(String logLevel, Object... obj) {
         String objString = Stream.of(obj).map(Stringifier::stringify).collect(Collectors.joining(", "));
         ZonedDateTime time = Instant.now().atZone(ZoneId.systemDefault());
-        outPrintStream.println(String.format(LOG_FORMAT, time, logLevel, objString));
+        String threadName = Thread.currentThread().getName().toUpperCase();
+        outPrintStream.println(String.format(LOG_FORMAT, time, threadName, logLevel, objString));
     }
 
     @Override

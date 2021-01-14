@@ -4,13 +4,21 @@ import java.lang.reflect.Field;
 
 public class Stringifier {
 
-    private final static int MAX_DEPTH = 1;
+    private static final int DEFAULT_MAX_DEPTH = 1;
 
-    public static String stringify(Object object) {
-        return stringify(object, 0);
+    private Stringifier() {
+        throw new IllegalStateException("Static only, utility class");
     }
 
-    private static String stringify(Object object, int depth) {
+    public static String stringify(Object object) {
+        return stringify(object, DEFAULT_MAX_DEPTH, 0);
+    }
+
+    public static String stringify(Object object, int recursiveDepth) {
+        return stringify(object, recursiveDepth, 0);
+    }
+
+    private static String stringify(Object object, int maxDepth, int currentDepth) {
         if (!hasDefaultToString(object)) {
             return object.toString();
         }
@@ -25,7 +33,7 @@ public class Stringifier {
                     value = "null";
                 }
 
-                stringBuilder.append(field.getName()).append("=").append(depth >= MAX_DEPTH ? "..." : stringify(value, depth + 1)).append(",");
+                stringBuilder.append(field.getName()).append("=").append(currentDepth >= maxDepth ? "..." : stringify(value, maxDepth, currentDepth + 1)).append(",");
             } catch (IllegalAccessException ex) {
                 ex.printStackTrace();
             }

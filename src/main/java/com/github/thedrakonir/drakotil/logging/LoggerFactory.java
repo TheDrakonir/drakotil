@@ -9,6 +9,10 @@ public class LoggerFactory {
     private static FileLogger fileLogger;
     private static BiLogger biLogger;
 
+    private LoggerFactory() {
+        throw new IllegalStateException("Static only, utility class");
+    }
+
     public static Logger getLogger() {
         if (biLogger != null) {
             return biLogger;

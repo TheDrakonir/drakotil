@@ -3,7 +3,7 @@ package com.github.thedrakonir.drakotil.logging;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -17,43 +17,48 @@ import com.github.thedrakonir.drakotil.serialization.Stringifier;
 
 public class FileLogger implements Logger {
 
-    private final static String LOG_FORMAT = "[%1$tF %1$tT][%2$s]: %3$s";
+    private static final String DEFAULT_FILE_NAME_FORMAT = "%tF.log";
+    private static final String DEFAULT_LOG_PATH_FOLDER = "logs";
+    private static final boolean DEFAULT_CONTINEOUS_LOG_SETTING = false;
+    private static final String LOG_FORMAT = "[%1$tF %1$tT][%2$s][%3$s]: %4$s";
 
-    private Path logPath;
-    private String filenameFormat;
-    private boolean contineous;
+    private final Path logPath;
+    private final String filenameFormat;
+    private final boolean contineous;
 
     private Optional<File> currentLogfile = Optional.empty();
 
     protected FileLogger(Path logPath, String filenameFormat, boolean contineous) {
         this.logPath = logPath;
         this.filenameFormat = filenameFormat;
+        this.contineous = contineous;
     }
 
     protected FileLogger(Path logPath, String filenameFormat) {
-        this(logPath, filenameFormat, false);
+        this(logPath, filenameFormat, DEFAULT_CONTINEOUS_LOG_SETTING);
     }
 
     protected FileLogger(Path logPath) {
-        this(logPath, "%tF.log");
+        this(logPath, DEFAULT_FILE_NAME_FORMAT);
     }
 
     protected FileLogger(Path logPath, boolean contineous) {
-        this(logPath, "%tF.log", contineous);
+        this(logPath, DEFAULT_FILE_NAME_FORMAT, contineous);
     }
 
     protected FileLogger(boolean contineous) {
-        this(Paths.get("", "logs").toAbsolutePath(), contineous);
+        this(Paths.get("", DEFAULT_LOG_PATH_FOLDER).toAbsolutePath(), contineous);
     }
 
     protected FileLogger() {
-        this(Paths.get("", "logs").toAbsolutePath());
+        this(Paths.get("", DEFAULT_LOG_PATH_FOLDER).toAbsolutePath());
     }
 
     private void writeLog(String logLevel, Object... obj) {
         String objString = Stream.of(obj).map(Stringifier::stringify).collect(Collectors.joining(", "));
         ZonedDateTime time = Instant.now().atZone(ZoneId.systemDefault());
-        String content = String.format(LOG_FORMAT, time, logLevel, objString);
+        String threadName = Thread.currentThread().getName().toUpperCase();
+        String content = String.format(LOG_FORMAT, time, threadName, logLevel, objString);
 
         if (contineous && currentLogfile.isPresent()) {
             logToFile(currentLogfile.get(), content);
@@ -92,7 +97,7 @@ public class FileLogger implements Logger {
     }
 
     private void logToFile(File file, String content) {
-        try (FileWriter fileWriter = new FileWriter(file, Charset.forName("UTF-8"), true)) {
+        try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8, true)) {
             fileWriter.append(content + "\n");
         } catch (IOException ex) {
             ex.printStackTrace();
