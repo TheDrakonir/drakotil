@@ -11,12 +11,13 @@ import java.util.Optional;
 import com.github.thedrakonir.drakotil.logging.LoggerFactory;
 
 public class Enviroment {
-    private static Map<String, String> cachedVariables;
+
+    private Enviroment() {
+        throw new IllegalStateException("Static only, utility class");
+    }
 
     public static Optional<String> getValue(String key) {
-        updateCache();
-
-        return Optional.ofNullable(cachedVariables.get(key));
+        return Optional.ofNullable(getValues().get(key));
     }
 
     public static String getValueOrElse(String key, String defaultValue) {
@@ -26,32 +27,27 @@ public class Enviroment {
     }
 
     public static Map<String, String> getValues() {
-        updateCache();
-
-        return cachedVariables;
-    }
-
-    private static void updateCache() {
-        cachedVariables = new HashMap<String, String>(System.getenv());
+        Map<String, String> envVars = new HashMap<>(System.getenv());
 
         Path envFilePath = Paths.get("", ".env");
         try {
             if (Files.notExists(envFilePath)) {
                 LoggerFactory.getLogger().info("No .env file found. Only using enviroment variables.");
-                return;
+            } else {
+                Files.readAllLines(envFilePath).forEach(line -> {
+                    String[] values = line.split("=");
+                    try {
+                        envVars.put(values[0], values[1]);
+                    } catch (IndexOutOfBoundsException ex) {
+                        throw new IllegalArgumentException(
+                                "Corrupted data in .env file. Check for errors and rerun the programm.");
+                    }
+                });
             }
-
-            Files.readAllLines(envFilePath).forEach(line -> {
-                String[] values = line.split("=");
-                try {
-                    cachedVariables.put(values[0], values[1]);
-                } catch (IndexOutOfBoundsException ex) {
-                    throw new IllegalArgumentException(
-                            "Corrupted data in .env file. Check for errors and rerun the programm.");
-                }
-            });
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+
+        return envVars;
     }
 }

@@ -12,57 +12,57 @@ public class OS {
         UNKNOWN;
     }
 
-    private static OS_Type type;
-    private static String version;
+    private static final OS_Type TYPE;
+    private static final String VERSION;
 
-    private static String javaClassVersion;
+    private static final String JAVA_CLASS_VERSION;
 
-    private static String username;
-    private static Path userHome;
-    private static String userLanguage;
+    private static final String USERNAME;
+    private static final Path USER_HOME_PATH;
+    private static final String USER_LANGUAGE;
     
     static {
         String osName = System.getProperty("os.name");
         if (osName.toLowerCase().contains("windows")) {
-            type = OS_Type.WINDOWS;
+            TYPE = OS_Type.WINDOWS;
         } else if (osName.toLowerCase().contains("mac")) {
-            type = OS_Type.MAC_OS;
+            TYPE = OS_Type.MAC_OS;
         } else if (osName.toLowerCase().contains("linux")) {
-            type = OS_Type.LINUX;
+            TYPE = OS_Type.LINUX;
         } else {
-            type = OS_Type.UNKNOWN;
+            TYPE = OS_Type.UNKNOWN;
         }
 
-        version = System.getProperty("os.version");
+        VERSION = System.getProperty("os.version");
 
-        javaClassVersion = System.getProperty("java.class.version");
+        JAVA_CLASS_VERSION = System.getProperty("java.class.version");
 
-        username = System.getProperty("user.name");
-        userHome = Paths.get(System.getProperty("user.home"));
-        userLanguage = System.getProperty("user.language");
+        USERNAME = System.getProperty("user.name");
+        USER_HOME_PATH = Paths.get(System.getProperty("user.home"));
+        USER_LANGUAGE = System.getProperty("user.language");
     }
 
     public static OS_Type getOS() {
-        return type;
+        return TYPE;
     }
 
     public static String getVersion() {
-        return version;
+        return VERSION;
     }
 
     public static String getJavaClassVersion() {
-        return javaClassVersion;
+        return JAVA_CLASS_VERSION;
     }
 
     public static String getUsername() {
-        return username;
+        return USERNAME;
     }
 
     public static Path getUserHome() {
-        return userHome;
+        return USER_HOME_PATH;
     }
 
     public static String getUserLanguage() {
-        return userLanguage;
+        return USER_LANGUAGE;
     }
 }
